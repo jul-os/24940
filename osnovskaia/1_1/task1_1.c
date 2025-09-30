@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/resource.h>
+#include <string.h>
 // todo print usage
 
 void print_usage()
@@ -146,27 +147,46 @@ int main(int argc, char *argv[])
         break;
         case 'C':
         {
-            rlim_t size = optarg;
+            if (optarg == NULL)
+            {
+                fprintf(stderr, "Option -C requires an argument\n");
+                return 1;
+            }
+            // Преобразуем строку в число
+            char *endptr;
+            long size = strtol(optarg, &endptr, 10);
+            // Проверяем корректность преобразования
+            if (endptr == optarg || *endptr != '\0')
+            {
+                fprintf(stderr, "Invalid number for -C: %s\n", optarg);
+                return 1;
+            }
+            // Проверяем на отрицательные значения
+            if (size < 0)
+            {
+                fprintf(stderr, "Core file size cannot be negative: %ld\n", size);
+                return 1;
+            }
             struct rlimit rlim;
             if (getrlimit(RLIMIT_CORE, &rlim) == -1)
             {
                 perror("getrlimit failed");
-                return -1;
+                return 1;
             }
-            rlim.rlim_cur = size;
+            rlim.rlim_cur = (rlim_t)size;
             if (setrlimit(RLIMIT_CORE, &rlim) == -1)
             {
                 perror("setrlimit failed");
-                return -1;
+                return 1;
             }
             printf("Core file size limit set to: ");
-            if (size == RLIM_INFINITY)
+            if (rlim.rlim_cur == RLIM_INFINITY)
             {
                 printf("unlimited\n");
             }
             else
             {
-                printf("%ld bytes\n", (long)size);
+                printf("%ld bytes\n", (long)rlim.rlim_cur);
             }
         }
         break;
