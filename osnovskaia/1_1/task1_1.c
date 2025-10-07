@@ -4,7 +4,6 @@
 #include <bits/getopt_core.h>
 #include <linux/limits.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <sys/resource.h>
 #include <string.h>
 // todo print usage
