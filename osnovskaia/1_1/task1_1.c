@@ -1,8 +1,9 @@
+#include <sys/param.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <bits/getopt_core.h>
-#include <linux/limits.h>
+#include <getopt.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <string.h>
@@ -11,6 +12,8 @@
 void print_usage()
 {
 }
+
+
 void set_environment_variable(const char *name, const char *value)
 {
     printf("\n");
@@ -191,7 +194,13 @@ int main(int argc, char *argv[])
         break;
         case 'd':
         {
-            char cwd[PATH_MAX];
+#ifdef MAXPATHLEN  // Для Solaris
+    char cwd[MAXPATHLEN];
+#elif defined(PATH_MAX)  // Для Linux и других
+    char cwd[PATH_MAX];
+#else
+    char cwd[4096];  // Fallback значение
+#endif
             if (getcwd(cwd, sizeof(cwd)) != NULL)
             {
                 printf("Current directory: %s\n", cwd);
