@@ -10,7 +10,7 @@
 #include <sys/resource.h>
 #include <string.h>
 
-void print_usage()
+void PrintUsage()
 {
     printf("-i Печатает реальные и эффективные идентификаторы пользователя и группы.\n-s Процесс становится лидером группы. Подсказка: смотри setpgid(2).\n-p Печатает идентификаторы процесса, процесса-родителя и группы процессов.\n-u Печатает значение ulimit\n");
     printf("-Unew_ulimit Изменяет значение ulimit. Подсказка: смотри atol(3C) на странице руководства strtol(3C)\n-c Печатает размер в байтах core-файла, который может быть создан.\n-Csize Изменяет размер core-файла");
@@ -54,7 +54,7 @@ int parse_name_value(const char *input, char **name, char **value)
 extern char **environ;
 int main(int argc, char *argv[])
 {
-    print_usage();
+    PrintUsage();
     int c;
     while ((c = getopt(argc, argv, "ispuU:cC:dvV:")) != -1)
     {
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
         break;
         case 'u':
         {
-        long max_proc = sysconf(_SC_CHILD_MAX);
-        printf("sysconf(_SC_CHILD_MAX): %ld\n", max_proc);
+            long max_proc = sysconf(_SC_CHILD_MAX);
+            printf("sysconf(_SC_CHILD_MAX): %ld\n", max_proc);
         }
         break;
         case 'U':
