@@ -14,6 +14,7 @@
 char buf[256];
 int len = 0;
 int col = 0;
+
 // Функция для поиска начала последнего слова
 int find_last_word_start()
 {
@@ -30,11 +31,11 @@ int find_last_word_start()
     if (pos < 0)
         return len;
 
-    // Ищем начало слова (первый непробельный символ слова)
+    // Ищем начало слова
     while (pos >= 0 && !isspace(buf[pos]))
         pos--;
 
-    return pos + 1; // Начало слова
+    return pos + 1;
 }
 
 void del_word()
@@ -90,22 +91,7 @@ void redraw()
     }
     fflush(stdout);
 }
-/*
-void del_word()
-{
-    if (len == 0)
-    {
-        putchar(BELL);
-        return;
-    }
-    int end = len - 1;
-    while (end >= 0 && isspace(buf[end]))
-        end--;
-    while (end >= 0 && !isspace(buf[end]))
-        end--;
-    len = end + 1;
-}
-*/
+
 int main()
 {
     init_term();
