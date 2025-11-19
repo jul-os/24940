@@ -87,9 +87,15 @@ int main(int argc, char *argv[])
         break;
         case 'u':
         {
+<<<<<<< HEAD
 	long max_proc = sysconf(_SC_CHILD_MAX);
         printf("sysconf(_SC_CHILD_MAX): %ld\n", max_proc);
  	}
+=======
+        long max_proc = sysconf(_SC_CHILD_MAX);
+        printf("sysconf(_SC_CHILD_MAX): %ld\n", max_proc);
+        }
+>>>>>>> 31d25991e4ce6a4a44691255af8221fab483ea60
         break;
         case 'U':
         {
