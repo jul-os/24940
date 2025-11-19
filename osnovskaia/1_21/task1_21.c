@@ -1,37 +1,28 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-#include <stdlib.h>
 
-int beep_count = 0;
+volatile sig_atomic_t signal_count = 0;
 
-void signal_handler(int sig)
-{
-    if (sig == SIGINT)
-    {
-        beep_count++;
-        write(STDOUT_FILENO, "\a", 1); // звуковой сигнал
-    }
-    else if (sig == SIGQUIT)
-    {
-        printf("\nПрограмма завершена. Всего звуковых сигналов: %d\n", beep_count);
-        exit(0);
-    }
+void sigint_handler(int sig) {
+    (void)sig;
+    signal_count++;
+    putchar('\a');
+    fflush(stdout);
 }
 
-int main()
-{
-    signal(SIGINT, signal_handler);
-    signal(SIGQUIT, signal_handler);
+void sigquit_handler(int sig) {
+    (void)sig;
+    printf("Signal sounded %d time(s).\n", signal_count);
+    exit(0);
+}
 
-    printf("Программа запущена. Используйте:\n");
-    printf("  Ctrl-C - звуковой сигнал\n");
-    printf("  Ctrl-\\ - завершение программы\n");
-    printf("Ожидание сигналов...\n");
-    while (1)
-    {
-        pause(); // ожидает любой сигнал
+int main(void) {
+    signal(SIGQUIT, sigint_handler); // Ctrl+C
+    signal(SIGINT, sigquit_handler); // Ctrl+4
+    
+    while (1) {
+        pause();
     }
-
-    return 0;
 }

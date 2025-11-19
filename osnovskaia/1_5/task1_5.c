@@ -108,8 +108,7 @@ int main(int argc, char *argv[])
 
         if (!check_input(input))
         {
-            printf("Введите номер строки (0 для выхода): ");
-            continue;
+             continue;
         }
         else
         {
