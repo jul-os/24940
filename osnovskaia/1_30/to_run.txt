@@ -1,5 +1,0 @@
-cd 24940/osnovskaia/1_30/
-gcc -o serrver server.c
-gcc -o client client.c
-./serrver 
-./client 
