@@ -1,56 +1,46 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
-#define SOCKET_PATH "/tmp/async_socket"
-#define BUFFER_SIZE 1024
+#define SOCKET_PATH "my_socket"
+#define BUF_SIZE 1024
 
-int main()
+int main(void)
 {
-    int client_fd;
-    struct sockaddr_un server_addr;
-    char buffer[BUFFER_SIZE];
-    int bytes_read;
+    int fd;
+    struct sockaddr_un addr;
+    char buf[BUF_SIZE];
+    ssize_t n;
 
-    client_fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (client_fd == -1)
+    fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (fd == -1)
     {
         perror("socket");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sun_family = AF_UNIX;
-    strncpy(server_addr.sun_path, SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
 
-    if (connect(client_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+    if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
     {
         perror("connect");
-        close(client_fd);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
-    printf("Подключено к асинхронному серверу. Введите текст (Ctrl+D для завершения):\n");
-
-    while ((bytes_read = read(0, buffer, BUFFER_SIZE)) > 0)
+    /* Перекачиваем всё из stdin в сокет */
+    while ((n = read(STDIN_FILENO, buf, sizeof(buf))) > 0)
     {
-        if (write(client_fd, buffer, bytes_read) == -1)
+        if (write(fd, buf, n) != n)
         {
             perror("write");
             break;
         }
     }
-
-    if (bytes_read == -1)
-    {
-        perror("read");
-    }
-
-    printf("Соединение закрыто\n");
-    close(client_fd);
-
+    close(fd);
     return 0;
 }

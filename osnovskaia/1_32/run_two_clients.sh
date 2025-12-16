@@ -2,8 +2,7 @@
 SERVER="./server"
 CLIENT="./client"
 
-SOCKET_PATH="/tmp/uppercase_socket"
-
+SOCKET_PATH="my_socket"
 # Функция завершения убить все процессы и удалить сокет
 cleanup() {
     echo "Завершаем работу..."
@@ -41,7 +40,8 @@ echo "Сервер запущен, запускаем клиентов..."
 # Клиент 1 отправляет каждые 0.5 сек
 (
     while true; do
-        echo "Client one"
+        echo "Client 1"
+        echo "second line of 1"
         sleep 0.5
     done
 ) | $CLIENT &
@@ -50,11 +50,39 @@ CLIENT1_PID=$!
 # Клиент 2 отправляет каждые 0.7 сек
 (
     while true; do
-        echo "Client two"
+        echo "Client 2"
+        echo "second line of 2"
         sleep 0.7
     done
 ) | $CLIENT &
 CLIENT2_PID=$!
+
+(
+    while true; do
+        echo "Client 3"
+        echo "second line of 3"
+        sleep 0.2
+    done
+) | $CLIENT &
+CLIENT3_PID=$!
+
+(
+    while true; do
+        echo "Client 4"
+        echo "second line of 4"
+        sleep 0.4
+    done
+) | $CLIENT &
+CLIENT3_PID=$!
+
+(
+    while true; do
+        echo "Client 5"
+        echo "second line of 5"
+        sleep 0.6
+    done
+) | $CLIENT &
+CLIENT5_PID=$!
 
 echo "Клиенты запущены. Нажмите Ctrl+C для остановки."
 

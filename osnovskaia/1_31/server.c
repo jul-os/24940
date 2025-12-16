@@ -26,10 +26,8 @@ int main()
     int server_fd, client_fd;
     struct sockaddr_un server_addr, client_addr;
     socklen_t client_len;
-    struct pollfd fds[MAX_CLIENTS + 1]; // массив структур для остлеживания нескольких клиентов
-    // каждя содержит файловый дескриптов .fd, .events - некие события которые нас интересуют
-    // запись и .revents - какие события уже произошли
-    int nfds = 1; // текущее количество отслежваемых дескрипторов
+    struct pollfd fds[MAX_CLIENTS + 1];
+    int nfds = 1;
     int timeout = 1000;
     char buffer[BUFFER_SIZE];
     int i, bytes_read;
@@ -67,17 +65,14 @@ int main()
     printf("Сервер запущен и слушает на %s\n", SOCKET_PATH);
     printf("Для завершения работы нажмите Ctrl+C или отправьте SIGTERM\n");
 
-    // poll-массив
     memset(fds, 0, sizeof(fds));
     fds[0].fd = server_fd;
-    // fds[0]- слушающий сокет
-    // данные уде подключенных клиентов будут добавлятья в этот массив
-    fds[0].events = POLLIN; // событие которое ждем - данные клиента готовы для чтения
+    fds[0].events = POLLIN;
 
     while (!stop_server)
     {
         int ret = poll(fds, nfds, timeout);
-        // ждем события на одном из дескрипторов
+
         if (ret == -1)
         {
             if (errno == EINTR)
@@ -105,7 +100,6 @@ int main()
 
             printf("Новый клиент подключен (fd=%d)\n", client_fd);
 
-            // логирование подлкючения в массив
             if (nfds < MAX_CLIENTS + 1)
             {
                 fds[nfds].fd = client_fd;
@@ -147,7 +141,7 @@ int main()
                 }
             }
         }
-        // удаление отключенный клиентов из массива
+
         for (i = 1; i < nfds; i++)
         {
             if (fds[i].fd == -1)
